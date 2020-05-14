@@ -111,4 +111,35 @@ class DefineMethodsTest extends TestCase
         $this->expectException(CompileException::class);
         SignatureDetector::of(Param::INT, 'tested', Param::INT);
     }
+
+    /**
+     * @test
+     */
+    public function useVariableNumberOfParameters(): void
+    {
+        $detector = SignatureDetector::of(Param::INT, Param::VARIABLE_NUMBERS);
+
+        $invocationCounter = new CallableInvocationCounter();
+
+        $detector
+            ->executeWhen([1, '2', 3], $invocationCounter);
+
+        $detector
+            ->executeWhen([1], $invocationCounter);
+
+        $detector->executeWhen(['0', 1], $invocationCounter);
+
+        $this->assertThat($invocationCounter, InvocationCounterIsCalledTimes::create(2));
+        $this->assertThat($invocationCounter, InvocationCounterWasCalledWithArgs::create(1, '2', 3));
+        $this->assertThat($invocationCounter, InvocationCounterWasCalledWithArgs::create(1));
+    }
+
+    /**
+     * @test
+     */
+    public function defineWrongVariableNumberOfParameters(): void
+    {
+        $this->expectException(CompileException::class);
+        SignatureDetector::of(Param::INT, Param::VARIABLE_NUMBERS, Param::INT);
+    }
 }

@@ -14,11 +14,8 @@ class SignatureDetector
 
     private function __construct($types)
     {
-        foreach ($types as $type) {
-            if (!$this->isDefinedType($type)) {
-                throw new CompileException("Type {$type} is not defined");
-            }
-        }
+        $this->checkDefinedTypes($types);
+        $this->checkVariableParameterNumber($types);
         $this->expectedTypes = $types;
     }
 
@@ -32,12 +29,16 @@ class SignatureDetector
 
     public function detect(array $argsValues): bool
     {
-        if (count($this->expectedTypes) !== count($argsValues)) {
+        if (!$this->definedVariableNumberOfParams() && $this->expectedTypesCount() !== count($argsValues)) {
             return false;
         }
 
         foreach ($this->expectedTypes as $signatureArgument) {
             $argValue = array_shift($argsValues);
+
+            if ($signatureArgument === Param::VARIABLE_NUMBERS) {
+                return true;
+            }
 
             if ($signatureArgument === Param::MIXED) {
                 continue;
@@ -160,5 +161,36 @@ class SignatureDetector
         self::$TYPE_DICTIONARY = array_flip($paramClass->getConstants());
 
         return self::$TYPE_DICTIONARY;
+    }
+
+    private function expectedTypesCount(): int
+    {
+        return count($this->expectedTypes);
+    }
+
+    private function definedVariableNumberOfParams(): bool
+    {
+        return $this->expectedTypes[count($this->expectedTypes) - 1] === Param::VARIABLE_NUMBERS;
+    }
+
+    private function checkDefinedTypes($types): void
+    {
+        foreach ($types as $type) {
+            if (!$this->isDefinedType($type)) {
+                throw new CompileException("Type {$type} is not defined");
+            }
+        }
+    }
+
+    private function checkVariableParameterNumber($types): void
+    {
+        if (count($types) <= 1) {
+            return;
+        }
+
+        array_pop($types);
+        if (in_array(Param::VARIABLE_NUMBERS, $types, true)) {
+            throw new CompileException("Type Param::VARIABLE_NUMBERS must be only last");
+        }
     }
 }
