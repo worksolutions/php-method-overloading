@@ -2,12 +2,14 @@
 
 namespace MethodOverloading;
 
+use Exception;
 use MethodOverloading\Constraints\InvocationCounterIsCalledTimes;
 use MethodOverloading\Constraints\InvocationCounterWasCalledWithArgs;
 use MethodOverloading\Constraints\InvocationCounterWasNotCalledWithArgs;
 use MethodOverloading\TestScaffolding\CallableInvocationCounter;
 use PHPUnit\Framework\TestCase;
 use SplObjectStorage;
+use Traversable;
 
 /**
  * @author Maxim Sokolovsky
@@ -141,5 +143,35 @@ class DefineMethodsTest extends TestCase
     {
         $this->expectException(CompileException::class);
         SignatureDetector::of(Param::INT, Param::VARIABLE_NUMBERS, Param::INT);
+    }
+
+    /**
+     * @test
+     */
+    public function defineIterableParameter(): void
+    {
+        $detector = SignatureDetector::of(Param::INT, Param::ITERABLE, Param::INT);
+
+        $invocationCounter = new CallableInvocationCounter();
+
+        $detector
+            ->executeWhen([1, [], 1], $invocationCounter);
+
+        $iterable = new class implements \IteratorAggregate {
+            public function getIterator()
+            {
+                return [];
+            }
+        };
+
+        $detector
+            ->executeWhen([1, $iterable, 3], $invocationCounter);
+
+        $detector
+            ->executeWhen([1, null, 2], $invocationCounter);
+
+        $this->assertThat($invocationCounter, InvocationCounterIsCalledTimes::create(2));
+        $this->assertThat($invocationCounter, InvocationCounterWasCalledWithArgs::create(1, [], 1));
+        $this->assertThat($invocationCounter, InvocationCounterWasCalledWithArgs::create(1, $iterable, 3));
     }
 }

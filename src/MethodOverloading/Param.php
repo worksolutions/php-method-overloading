@@ -17,7 +17,7 @@ class Param
 
     public const NULL = 'null';
     public const MIXED = 'mixed';
-    public const ITERABLE = 'mixed';
+    public const ITERABLE = 'iterable';
 
     public const VARIABLE_NUMBERS = 'var-len';
 

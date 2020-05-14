@@ -64,6 +64,10 @@ class SignatureDetector
                 return false;
             }
 
+            if ($signatureArgument === Param::ITERABLE && !$this->isIterable($argValue)) {
+                return false;
+            }
+
             if ($signatureArgument === Param::OBJ && !$this->isObject($argValue)) {
                 return false;
             }
@@ -192,5 +196,10 @@ class SignatureDetector
         if (in_array(Param::VARIABLE_NUMBERS, $types, true)) {
             throw new CompileException("Type Param::VARIABLE_NUMBERS must be only last");
         }
+    }
+
+    private function isIterable($argValue): bool
+    {
+        return is_iterable($argValue);
     }
 }
