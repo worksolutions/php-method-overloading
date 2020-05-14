@@ -15,6 +15,12 @@ class Param
     public const FUN = 'fun';
     public const ARRAY = 'array';
 
+    public const NULL = 'null';
+    public const MIXED = 'mixed';
+    public const ITERABLE = 'mixed';
+
+    public const VARIABLE_NUMBERS = 'var-len';
+
     public static function instanceOf($class): array
     {
         if (!class_exists($class)) {

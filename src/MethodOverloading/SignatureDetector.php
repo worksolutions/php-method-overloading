@@ -5,13 +5,21 @@
 
 namespace MethodOverloading;
 
+use ReflectionClass;
+
 class SignatureDetector
 {
-    private $expectedArgs;
+    private static $TYPE_DICTIONARY;
+    private $expectedTypes;
 
-    private function __construct($args)
+    private function __construct($types)
     {
-        $this->expectedArgs = $args;
+        foreach ($types as $type) {
+            if (!$this->isDefinedType($type)) {
+                throw new CompileException("Type {$type} is not defined");
+            }
+        }
+        $this->expectedTypes = $types;
     }
 
     /**
@@ -24,11 +32,11 @@ class SignatureDetector
 
     public function detect(array $argsValues): bool
     {
-        if (count($this->expectedArgs) !== count($argsValues)) {
+        if (count($this->expectedTypes) !== count($argsValues)) {
             return false;
         }
 
-        foreach ($this->expectedArgs as $signatureArgument) {
+        foreach ($this->expectedTypes as $signatureArgument) {
             $argValue = array_shift($argsValues);
 
             if ($signatureArgument === Param::INT && !$this->isInt($argValue)) {
@@ -56,6 +64,10 @@ class SignatureDetector
             }
 
             if ($signatureArgument === Param::FUN && !$this->isCallable($argValue)) {
+                return false;
+            }
+
+            if ($signatureArgument === Param::NULL && $argValue !== null) {
                 return false;
             }
 
@@ -121,5 +133,28 @@ class SignatureDetector
             return true;
         }
         return false;
+    }
+
+    private function isDefinedType($tested): bool
+    {
+        if (is_array($tested)) {
+            return $tested[0] === 'instanceOf';
+        }
+
+        $definedTypes = $this->getDefinedTypes();
+
+        return isset($definedTypes[$tested]);
+    }
+
+    private function getDefinedTypes(): array
+    {
+        if (self::$TYPE_DICTIONARY !== null) {
+            return self::$TYPE_DICTIONARY;
+        }
+
+        $paramClass = new ReflectionClass(Param::class);
+        self::$TYPE_DICTIONARY = array_flip($paramClass->getConstants());
+
+        return self::$TYPE_DICTIONARY;
     }
 }
