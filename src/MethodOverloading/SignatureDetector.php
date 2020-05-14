@@ -39,6 +39,10 @@ class SignatureDetector
         foreach ($this->expectedTypes as $signatureArgument) {
             $argValue = array_shift($argsValues);
 
+            if ($signatureArgument === Param::MIXED) {
+                continue;
+            }
+
             if ($signatureArgument === Param::INT && !$this->isInt($argValue)) {
                 return false;
             }

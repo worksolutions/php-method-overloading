@@ -80,4 +80,35 @@ class DefineMethodsTest extends TestCase
         $this->assertThat($invocationCounter, InvocationCounterIsCalledTimes::create(1));
         $this->assertThat($invocationCounter, InvocationCounterWasCalledWithArgs::create(1, null, 2));
     }
+
+    /**
+     * @test
+     */
+    public function mixedParamsUsing():void
+    {
+        $invocationCounter = new CallableInvocationCounter();
+        $detector = SignatureDetector::of(Param::INT, Param::MIXED, Param::INT);
+
+        $detector
+            ->executeWhen([1, null, 2], $invocationCounter);
+
+        $detector
+            ->executeWhen([1, 2, 3], $invocationCounter);
+
+        $detector
+            ->executeWhen([null, null, 1], $invocationCounter);
+
+        $this->assertThat($invocationCounter, InvocationCounterIsCalledTimes::create(2));
+        $this->assertThat($invocationCounter, InvocationCounterWasCalledWithArgs::create(1, null, 2));
+        $this->assertThat($invocationCounter, InvocationCounterWasCalledWithArgs::create(1, 2, 3));
+    }
+
+    /**
+     * @test
+     */
+    public function unexpectedDefinitionType(): void
+    {
+        $this->expectException(CompileException::class);
+        SignatureDetector::of(Param::INT, 'tested', Param::INT);
+    }
 }
