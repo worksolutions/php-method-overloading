@@ -3,7 +3,7 @@
  * @author Maxim Sokolovsky
  */
 
-namespace MethodOverloading;
+namespace WS\Utils\MethodOverloading;
 
 use ReflectionClass;
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace MethodOverloading\TestScaffolding;
+namespace WS\Utils\MethodOverloading\TestScaffolding;
 
 /**
  * @author Maxim Sokolovsky

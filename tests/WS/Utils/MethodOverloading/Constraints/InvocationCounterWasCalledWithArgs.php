@@ -1,8 +1,8 @@
 <?php
 
-namespace MethodOverloading\Constraints;
+namespace WS\Utils\MethodOverloading\Constraints;
 
-use MethodOverloading\TestScaffolding\CallableInvocationCounter;
+use WS\Utils\MethodOverloading\TestScaffolding\CallableInvocationCounter;
 use PHPUnit\Framework\Constraint\Constraint;
 use RuntimeException;
 use function sprintf;
@@ -11,22 +11,21 @@ use function sprintf;
  * @author Maxim Sokolovsky
  */
 
-class InvocationCounterIsCalledTimes extends Constraint
+class InvocationCounterWasCalledWithArgs extends Constraint
 {
-
     /**
      * @var int
      */
-    private $times;
+    private $args;
 
-    public function __construct($times = 1)
+    public function __construct(...$args)
     {
-        $this->times = $times;
+        $this->args = $args;
     }
 
-    public static function create($times = 1): InvocationCounterIsCalledTimes
+    public static function create(...$args): InvocationCounterWasCalledWithArgs
     {
-        return new self($times);
+        return new self(...$args);
     }
 
     protected function matches($other): bool
@@ -35,7 +34,7 @@ class InvocationCounterIsCalledTimes extends Constraint
             throw new RuntimeException('Value of comparision need to be instance of CallableInvocationCounter');
         }
 
-        return $other->countOfInvocations() === $this->times;
+        return $other->isCalledWith(...$this->args);
     }
 
     /**
@@ -44,7 +43,9 @@ class InvocationCounterIsCalledTimes extends Constraint
      */
     protected function failureDescription($other): string
     {
-        return "Expected that counter was called {$this->times} times, but {$other->countOfInvocations()}";
+        $exporter = $this->exporter();
+
+        return "Expected that counter was called  with: {$exporter->export($this->args)} arguments, but {$exporter->export($other->getInvocations())}";
     }
 
     public function toString(): string

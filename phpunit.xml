@@ -9,12 +9,7 @@
          stopOnFailure="false">
     <testsuites>
         <testsuite name="Unit">
-            <directory suffix="Test.php">./tests/MethodOverloading</directory>
+            <directory suffix="Test.php">./tests/WS/Utils/MethodOverloading</directory>
         </testsuite>
     </testsuites>
-    <filter>
-        <whitelist processUncoveredFilesFromWhitelist="true">
-            <directory suffix=".php">./app</directory>
-        </whitelist>
-    </filter>
 </phpunit>

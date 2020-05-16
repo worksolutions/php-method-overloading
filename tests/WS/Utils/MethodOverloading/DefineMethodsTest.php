@@ -1,12 +1,12 @@
 <?php
 
-namespace MethodOverloading;
+namespace WS\Utils\MethodOverloading;
 
 use IteratorAggregate;
-use MethodOverloading\Constraints\InvocationCounterIsCalledTimes;
-use MethodOverloading\Constraints\InvocationCounterWasCalledWithArgs;
-use MethodOverloading\Constraints\InvocationCounterWasNotCalledWithArgs;
-use MethodOverloading\TestScaffolding\CallableInvocationCounter;
+use WS\Utils\MethodOverloading\Constraints\InvocationCounterIsCalledTimes;
+use WS\Utils\MethodOverloading\Constraints\InvocationCounterWasCalledWithArgs;
+use WS\Utils\MethodOverloading\Constraints\InvocationCounterWasNotCalledWithArgs;
+use WS\Utils\MethodOverloading\TestScaffolding\CallableInvocationCounter;
 use PHPUnit\Framework\TestCase;
 use SplObjectStorage;
 

@@ -13,10 +13,10 @@
     "phpunit/phpunit": "^8.5"
   },
   "autoload": {
-    "psr-4": {"MethodOverloading\\": "src/MethodOverloading"}
+    "psr-4": {"WS\\Utils\\MethodOverloading\\": "src/WS/Utils/MethodOverloading"}
   },
   "autoload-dev": {
-    "psr-4": {"MethodOverloading\\": "tests/MethodOverloading"}
+    "psr-4": {"WS\\Utils\\MethodOverloading\\": "tests/WS/Utils/MethodOverloading"}
   },
   "scripts": {
     "test": [
