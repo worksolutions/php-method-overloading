@@ -2,14 +2,13 @@
 
 namespace MethodOverloading;
 
-use Exception;
+use IteratorAggregate;
 use MethodOverloading\Constraints\InvocationCounterIsCalledTimes;
 use MethodOverloading\Constraints\InvocationCounterWasCalledWithArgs;
 use MethodOverloading\Constraints\InvocationCounterWasNotCalledWithArgs;
 use MethodOverloading\TestScaffolding\CallableInvocationCounter;
 use PHPUnit\Framework\TestCase;
 use SplObjectStorage;
-use Traversable;
 
 /**
  * @author Maxim Sokolovsky
@@ -157,8 +156,8 @@ class DefineMethodsTest extends TestCase
         $detector
             ->executeWhen([1, [], 1], $invocationCounter);
 
-        $iterable = new class implements \IteratorAggregate {
-            public function getIterator()
+        $iterable = new class implements IteratorAggregate {
+            public function getIterator(): array
             {
                 return [];
             }
