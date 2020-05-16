@@ -1,5 +1,5 @@
 {
-  "name": "vendor_name/php-method-overloading",
+  "name": "worksolutions/php-method-overloading",
   "description": "Method overloading tool for php",
   "minimum-stability": "dev",
   "license": "MIT",
