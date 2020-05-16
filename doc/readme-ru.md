@@ -70,10 +70,12 @@ class Builder {
 }
 ```
 
-Разработчики понимают, что исходным кодом в такой ситуации управлять сложно, поэтому такая множество комментариев перед каждым условным оператором потока выполения. Библиотека MethodOveloading служит для того чтобы решать подобные проблемы более устойчивым способом. Опираясь на сигнатуры параметров, как и делается во многих популярных языках программирования.
+Разработчики понимают, что исходным кодом в такой ситуации управлять сложно, поэтому такое можно увидеть множество комментариев перед каждым условным оператором потока выполнения. Библиотека MethodOverloading служит, для того чтобы решать подобные проблемы более устойчивым способом. Опираясь на сигнатуры параметров, как и делается во многих популярных языках программирования.
 
 Разберем тот же пример фреймворка Illuminate, только с использованием определения сигнатуры, с использованием некоторых упрощений, так как демонстрируемый способ влияет на микроархитектуру, делая ее таким образом чище.
 ```php
+<?php
+
 class Builder {    
        /**
         * Add a basic where clause to the query.
@@ -123,6 +125,8 @@ class Builder {
 В самом простом и основном случае библиотека используется примерно следующим образом:
 
 ```php
+<?php
+
 class UserRepository extends BaseReposityry
 {
     /**
@@ -135,20 +139,22 @@ class UserRepository extends BaseReposityry
 
         SignatureDetector::of(Param::of(Company::class), Param::VARIABLE_NUMBERS)
             ->executeWhen($params, function (Company $company, $limit) use ($collection) {
-                return $this->getUsersByCompany($company, $limit);
+                $collection = $this->getUsersByCompany($company, $limit);
             });
         SignatureDetector::of(Param::of(CompanyUser::class), Param::VARIABLE_NUMBERS)
             ->executeWhen($params, function (CompanyUser $companyUser, $limit) use ($collection) {
-                return $this->getUsersByCompanyUser($companyUser, $limit);
+                $collection = $this->getUsersByCompanyUser($companyUser, $limit);
             });
         return $collection;
     }
 }
 ```
 
-Можно вместо функционального подхода использовать условный оператор, код получается не много короче, но не совсем чистый
+Можно вместо функционального подхода использовать условный оператор, код получается немного короче, но не совсем чистый
 
 ```php
+<?php
+
 class UserRepository extends BaseReposityry
 {
     /**
@@ -167,6 +173,7 @@ class UserRepository extends BaseReposityry
         if ($companyUserDetector->detect($params)) {
             return $this->getUsersByCompanyUser($params[0], $params[1]);
         }
+        return Collection::make();
     }
 }
 ```
